@@ -1,28 +1,104 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Báo Cáo Sản Lượng 3.1</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <form id="reportForm">
     <h2>Báo Cáo Sản Lượng Ngày</h2>
+
     <div class="col">
       <label>Số lượng khuôn</label>
-      <input type="number" id="soluongKhuon" value="0" min="0">
+      <input type="number" id="soLuongKhuon" value="0" min="0">
     </div>
+
     <label>Sản phẩm</label>
     <input list="dsSanPham" id="sanPham" placeholder="Nhập hoặc chọn sản phẩm">
     <datalist id="dsSanPham">
       <option value="600*200*75">
       <option value="600*200*100">
+      <option value="600*200*140">
+      <option value="600*200*150">
+      <option value="600*200*200">
+      <option value="600*300*90">
       <option value="600*300*100">
+      <option value="600*300*140">
+      <option value="600*300*150">
+      <option value="600*300*200">
+      <option value="600*400*100">
+      <option value="600*400*200">
+      <option value="600*500*100">
+      <option value="1000*600*100">
+      <option value="1200*600*100">
+      <option value="1400*600*100">
+      <option value="1400*600*150">
+      <option value="1800*600*100">
+      <option value="1900*600*100">
+      <option value="2400*600*100">
+      <option value="2900*600*75">
+      <option value="3000*600*75">
+      <option value="3000*600*150">
+      <option value="3040*600*150">
+      <option value="3300*600*150">
+      <option value="3800*600*100">
     </datalist>
+
+    <label>Cường độ nén</label>
+    <select id="cuongDoNen">
+      <option>B3</option>
+      <option>B4</option>
+      <option>B5</option>
+    </select>
+
+    <label>Số lượng kiện</label>
+    <input type="number" id="soLuongKien" value="0" min="0">
+
+    <label>Chiều cao kiện</label>
+    <select id="chieuCaoKien">
+      <option>1m3</option>
+      <option>1m5</option>
+      <option>1m6</option>
+      <option>1m8</option>
+    </select>
+
+    <label>Số lượng hư hỏng</label>
+    <input type="number" id="soLuongHuHong" value="0" min="0">
+
+    <label>Loại hư hỏng</label>
+    <select id="loaiHuHong">
+      <option>Vỡ góc</option>
+      <option>Bể</option>
+      <option>Lệch dây</option>
+    </select>
+
+    <button type="button" onclick="themSanPham()">Thêm sản phẩm</button>
+    <div class="output" id="outputSanPham"></div>
+
+    <label>Kích thước pallet</label>
+    <input list="dsPallet" id="kichThuocPallet" placeholder="Nhập hoặc chọn kích thước pallet">
+    <datalist id="dsPallet">
+      <option value="1000*1200">
+      <option value="750*800">
+      <option value="600*800">
+    </datalist>
+
+    <label>Số lượng pallet</label>
+    <input type="number" id="soLuongPallet" value="0" min="0">
+
+    <button type="button" onclick="themPallet()">Thêm pallet</button>
+    <div class="output" id="outputPallet"></div>
+
     <button type="submit">📄 Báo Cáo</button>
   </form>
+
+  <div id="modal" class="modal" style="display:none;">
+    <p id="modalMessage">Đã gửi báo cáo!</p>
+    <button onclick="document.getElementById('modal').style.display='none'">Close</button>
+  </div>
+
   <script src="main.js"></script>
-  <script src="config.example.js"></script>
 </body>
 </html>
