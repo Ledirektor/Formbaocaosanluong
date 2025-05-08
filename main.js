@@ -14,18 +14,7 @@ function themSanPham() {
     showMessage('Vui lòng nhập đầy đủ thông tin sản phẩm!');
     return;
   }
-  const isDuplicate = danhSachSanPham.some(item => item.sanPham === sp.sanPham && item.cuongDoNen === sp.cuongDoNen);
-  if (isDuplicate) {
-    showMessage('Sản phẩm đã tồn tại!');
-    return;
-  }
   danhSachSanPham.push(sp);
-  document.getElementById('sanPham').value = '';
-  document.getElementById('cuongDoNen').selectedIndex = 0;
-  document.getElementById('soLuongKien').value = 0;
-  document.getElementById('chieuCaoKien').selectedIndex = 0;
-  document.getElementById('soLuongHuHong').value = 0;
-  document.getElementById('loaiHuHong').selectedIndex = 0;
   renderSanPham();
 }
 
@@ -53,14 +42,7 @@ function themPallet() {
     showMessage('Vui lòng nhập đầy đủ thông tin pallet!');
     return;
   }
-  const isDuplicate = danhSachPallet.some(item => item.kichThuoc === pallet.kichThuoc);
-  if (isDuplicate) {
-    showMessage('Pallet đã tồn tại!');
-    return;
-  }
   danhSachPallet.push(pallet);
-  document.getElementById('kichThuocPallet').value = '';
-  document.getElementById('soLuongPallet').value = 0;
   renderPallet();
 }
 
@@ -85,11 +67,12 @@ function showMessage(msg) {
 }
 
 document.getElementById('reportForm').addEventListener('submit', function(e) {
+  e.preventDefault();
   if (danhSachSanPham.length === 0 && danhSachPallet.length === 0 && parseInt(document.getElementById('soLuongKhuon').value) === 0) {
     showMessage('Vui lòng thêm ít nhất 1 sản phẩm hoặc pallet trước khi báo cáo!');
     return;
   }
-  e.preventDefault();
+
   const currentTimeVN = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
   const baoCao = {
     thoiGianGui: currentTimeVN,
@@ -97,11 +80,36 @@ document.getElementById('reportForm').addEventListener('submit', function(e) {
     sanPham: danhSachSanPham,
     pallet: danhSachPallet
   };
-  console.log('Báo cáo đã gửi:', baoCao);
-  showMessage(`Đã gửi báo cáo lúc ${currentTimeVN}`);
-  this.reset();
-  danhSachSanPham.length = 0;
-  danhSachPallet.length = 0;
-  renderSanPham();
-  renderPallet();
+
+  const filename = `baocao-${Date.now()}.json`;
+  const githubURL = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filename}`;
+
+  fetch(githubURL, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `token ${GITHUB_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      message: `Báo cáo mới lúc ${currentTimeVN}`,
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(baoCao))))
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.content && data.commit) {
+      showMessage(`Đã gửi báo cáo lúc ${currentTimeVN}`);
+      this.reset();
+      danhSachSanPham.length = 0;
+      danhSachPallet.length = 0;
+      renderSanPham();
+      renderPallet();
+    } else {
+      showMessage('Lỗi gửi báo cáo!');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    showMessage('Lỗi gửi báo cáo!');
+  });
 });
